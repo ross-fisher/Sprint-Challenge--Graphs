@@ -30,13 +30,20 @@ player = Player(world.starting_room)
 
 opposite_dirs = {'n':'s', 'e':'w', 'w':'e', 's':'n'}
 
+def invert_dict(index):
+    new_dic = {}
+    for k,v in index.items():
+        for x in v:
+            new_dic.setdefault(x,k)
+
+    return new_dic
+
 # fill out traversal path
 def do_traversal():
     player.current_room = world.starting_room
     graph = {}
     q = [ [player.current_room.id] ]
     travel_path = []
-
 
     def add_knowledge(room):
         nonlocal graph
@@ -70,23 +77,19 @@ def do_traversal():
             if len(q) == 0:
                 continue
 
-#            print(type(graph[room.id]))
-#            print(type(last_room))
-
             for _dir in graph[room.id]:
                 if graph[room.id][_dir] == last_room:
                     travel_back = _dir
                     break
 
             # go back to previous room since reached dead end
-#            print('Travel back', travel_back)
-
             player.travel(travel_back, travel_path)
             continue
 
         # room with unexplored rooms case
         else:
             node_knowledge = graph[room.id]
+
             for exit in exits:
 #                print('Exit: ', exit)
                 current_path = q[-1]
